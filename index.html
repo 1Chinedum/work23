@@ -1,0 +1,2510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Ralph Lie 🤥Detector🕵🏿</title>
+
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:
+        radial-gradient(circle at top,#10344a 0%,#07131c 45%,#03080c 100%);
+    color:#fff;
+    min-height:100vh;
+}
+
+header{
+    text-align:center;
+    padding:30px 20px;
+    border-bottom:1px solid rgba(0,220,255,.25);
+    background:rgba(0,0,0,.25);
+}
+
+header h1{
+    font-size:clamp(30px,5vw,52px);
+    color:#00e5ff;
+    letter-spacing:2px;
+    text-shadow:0 0 20px rgba(0,229,255,.5);
+}
+
+header p{
+    margin-top:10px;
+    color:#b8dbe3;
+}
+
+.container{
+    width:min(1200px,94%);
+    margin:30px auto;
+}
+
+.card{
+    background:rgba(7,23,33,.88);
+    border:1px solid rgba(0,229,255,.2);
+    border-radius:20px;
+    padding:25px;
+    margin-bottom:25px;
+    box-shadow:0 15px 50px rgba(0,0,0,.35);
+}
+
+.card h2{
+    color:#00e5ff;
+    margin-bottom:18px;
+}
+
+label{
+    display:block;
+    margin-bottom:8px;
+    color:#bce9ef;
+    font-weight:bold;
+}
+
+textarea{
+    width:100%;
+    min-height:110px;
+    resize:vertical;
+    border:1px solid rgba(0,229,255,.25);
+    border-radius:12px;
+    padding:15px;
+    background:#06121a;
+    color:#fff;
+    outline:none;
+    font-size:16px;
+}
+
+textarea:focus{
+    border-color:#00e5ff;
+    box-shadow:0 0 15px rgba(0,229,255,.15);
+}
+
+.question-display{
+    margin-top:15px;
+    padding:15px;
+    border-radius:12px;
+    background:rgba(0,229,255,.07);
+    border-left:4px solid #00e5ff;
+    color:#e8fbff;
+    min-height:50px;
+}
+
+.camera-wrapper{
+    position:relative;
+    width:100%;
+    max-width:900px;
+    margin:20px auto;
+    overflow:hidden;
+    border-radius:18px;
+    background:#000;
+    border:2px solid rgba(0,229,255,.3);
+}
+
+#video{
+    display:block;
+    width:100%;
+    height:auto;
+    transform:scaleX(-1);
+}
+
+#overlay{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    transform:scaleX(-1);
+}
+
+.status{
+    text-align:center;
+    margin:15px 0;
+    font-size:18px;
+    color:#9eeaf3;
+}
+
+.voice-box{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:15px;
+    margin:20px 0;
+}
+
+.voice-icon{
+    width:55px;
+    height:55px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#06212b;
+    border:2px solid #00e5ff;
+    font-size:25px;
+}
+
+.voice-active{
+    animation:pulse 1s infinite;
+    box-shadow:0 0 30px rgba(0,229,255,.7);
+}
+
+@keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.12)}
+    100%{transform:scale(1)}
+}
+
+.progress-container{
+    width:100%;
+    height:12px;
+    background:#07141b;
+    border-radius:20px;
+    overflow:hidden;
+    margin:20px 0;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00bcd4,#00e5ff);
+    transition:width .2s linear;
+}
+
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:center;
+    margin-top:20px;
+}
+
+button{
+    border:none;
+    padding:14px 22px;
+    border-radius:12px;
+    font-weight:bold;
+    font-size:15px;
+    cursor:pointer;
+    color:#001219;
+    background:#00e5ff;
+    transition:.2s;
+}
+
+button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 25px rgba(0,229,255,.25);
+}
+
+button:disabled{
+    opacity:.4;
+    cursor:not-allowed;
+    transform:none;
+    box-shadow:none;
+}
+
+.stop{
+    background:#ff6b6b;
+}
+
+.reset{
+    background:#d5e1e5;
+}
+
+.recording{
+    color:#ff7777;
+    font-weight:bold;
+    text-align:center;
+    min-height:25px;
+}
+
+.record-dot{
+    display:inline-block;
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    background:#ff4444;
+    margin-right:7px;
+    animation:blink 1s infinite;
+}
+
+@keyframes blink{
+    50%{opacity:.2}
+}
+
+.timer{
+    text-align:center;
+    font-size:28px;
+    color:#00e5ff;
+    font-weight:bold;
+    margin:10px;
+}
+
+audio{
+    width:100%;
+    margin-top:15px;
+}
+
+.analysis-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+    margin-top:25px;
+}
+
+.metric{
+    background:#06131b;
+    border:1px solid rgba(0,229,255,.15);
+    border-radius:15px;
+    padding:18px;
+    text-align:center;
+}
+
+.metric h3{
+    font-size:14px;
+    color:#9dcbd2;
+    margin-bottom:10px;
+}
+
+.metric p{
+    font-size:22px;
+    color:#00e5ff;
+    font-weight:bold;
+}
+
+.result{
+    display:none;
+    text-align:center;
+}
+
+.score{
+    font-size:clamp(30px,7vw,60px);
+    font-weight:bold;
+    color:#00e5ff;
+    margin:20px 0;
+}
+
+.resultText{
+    color:#c8e7ec;
+    line-height:1.7;
+}
+
+.warning{
+    margin-top:25px;
+    padding:18px;
+    border-radius:12px;
+    background:rgba(255,193,7,.08);
+    border:1px solid rgba(255,193,7,.3);
+    color:#ffe49a;
+    line-height:1.6;
+}
+
+.phase{
+    text-align:center;
+    padding:15px;
+    border-radius:12px;
+    background:#06141c;
+    margin-top:15px;
+    color:#a9e8ef;
+}
+
+.info{
+    color:#91b8c0;
+    font-size:14px;
+    line-height:1.6;
+    margin-top:12px;
+}
+
+.hidden{
+    display:none;
+}
+
+footer{
+    text-align:center;
+    padding:30px 15px;
+    color:#71949c;
+    border-top:1px solid rgba(0,229,255,.15);
+    margin-top:40px;
+}
+
+@media(max-width:600px){
+    .card{
+        padding:18px;
+    }
+
+    button{
+        width:100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+    <h1>Ralph Lie 🤥Detector🕵🏿</h1>
+
+    <p>
+        Experimental facial-expression and voice-tone analysis
+    </p>
+
+</header>
+
+<main class="container">
+
+    <!-- QUESTION -->
+
+    <section class="card">
+
+        <h2>1. Ask a Question</h2>
+
+        <label for="question">
+            Enter the question you want to ask
+        </label>
+
+        <textarea
+            id="question"
+            placeholder="Example: Did you take the money?"
+        ></textarea>
+
+        <div class="question-display">
+
+            <strong>Question:</strong>
+
+            <span id="questionPreview">
+                No question entered.
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- CAMERA -->
+
+    <section class="card">
+
+        <h2>2. Camera Analysis</h2>
+
+        <div class="camera-wrapper">
+
+            <video
+                id="video"
+                autoplay
+                muted
+                playsinline
+            ></video>
+
+            <canvas id="overlay"></canvas>
+
+        </div>
+
+        <div class="status" id="cameraStatus">
+            Camera not started.
+        </div>
+
+        <div class="voice-box">
+
+            <div
+                class="voice-icon"
+                id="voiceIcon"
+            >
+                🎙️
+            </div>
+
+            <div id="voiceStatus">
+                Voice assistant ready
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ANALYSIS -->
+
+    <section class="card">
+
+        <h2>3. Analysis</h2>
+
+        <div
+            class="phase"
+            id="phase"
+        >
+            Waiting to begin.
+        </div>
+
+        <div class="progress-container">
+
+            <div
+                class="progress-bar"
+                id="progressBar"
+            ></div>
+
+        </div>
+
+        <div
+            class="timer"
+            id="timer"
+        >
+            00:00
+        </div>
+
+        <div
+            class="recording"
+            id="recordingStatus"
+        >
+            Microphone not recording.
+        </div>
+
+        <div class="controls">
+
+            <button id="startBtn">
+                ▶ Start Analysis
+            </button>
+
+            <button
+                id="stopBtn"
+                class="stop"
+                disabled
+            >
+                ■ Stop Analysis
+            </button>
+
+            <button
+                id="resetBtn"
+                class="reset"
+            >
+                ↻ Reset
+            </button>
+
+        </div>
+
+        <p class="info">
+            After the question is spoken, you will have an opportunity
+            to defend yourself. Your microphone will record your answer
+            and the browser will estimate experimental voice features
+            such as pitch, volume and speaking activity.
+        </p>
+
+    </section>
+
+
+    <!-- RECORDING -->
+
+    <section
+        class="card"
+        id="recordingCard"
+    >
+
+        <h2>🎤 Recorded Defense</h2>
+
+        <div id="recordingMessage">
+            No recording yet.
+        </div>
+
+        <audio
+            id="audioPlayback"
+            controls
+            class="hidden"
+        ></audio>
+
+    </section>
+
+
+    <!-- RESULT -->
+
+    <section
+        class="card result"
+        id="result"
+    >
+
+        <h2>Analysis Complete</h2>
+
+        <div
+            class="score"
+            id="verdict"
+        >
+            NEUTRAL
+        </div>
+
+        <p
+            class="resultText"
+            id="resultText"
+        >
+            Waiting for analysis...
+        </p>
+
+
+        <div class="analysis-grid">
+
+            <div class="metric">
+                <h3>Final Verdict</h3>
+                <p id="verdictMetric">Neutral</p>
+            </div>
+
+            <div class="metric">
+                <h3>Facial Variation</h3>
+                <p id="faceVariationMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Voice Variation</h3>
+                <p id="voiceVariationMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Combined Score</h3>
+                <p id="combinedMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Dominant Expression</h3>
+                <p id="emotionMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Expression Changes</h3>
+                <p id="changeMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Average Pitch</h3>
+                <p id="pitchMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Pitch Variation</h3>
+                <p id="pitchVariationMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Voice Activity</h3>
+                <p id="activityMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Recording Time</h3>
+                <p id="recordingTimeMetric">--</p>
+            </div>
+
+            <div class="metric">
+                <h3>Analysis Time</h3>
+                <p id="timeMetric">--</p>
+            </div>
+
+        </div>
+
+
+        <div class="warning">
+
+            ⚠️ <strong>Important:</strong>
+
+            This is an experimental behavioral demonstration.
+
+            Facial expressions, voice pitch, speaking patterns and
+            similar signals cannot reliably determine whether a person
+            is lying or telling the truth.
+
+            The displayed result should not be treated as scientific
+            evidence or as a factual determination of deception.
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    Ralph Lie 🤥Detector🕵🏿 © 2026
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const video =
+    document.getElementById("video");
+
+const overlay =
+    document.getElementById("overlay");
+
+const ctx =
+    overlay.getContext("2d");
+
+const question =
+    document.getElementById("question");
+
+const questionPreview =
+    document.getElementById("questionPreview");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const stopBtn =
+    document.getElementById("stopBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+const progressBar =
+    document.getElementById("progressBar");
+
+const phase =
+    document.getElementById("phase");
+
+const timer =
+    document.getElementById("timer");
+
+const cameraStatus =
+    document.getElementById("cameraStatus");
+
+const voiceIcon =
+    document.getElementById("voiceIcon");
+
+const voiceStatus =
+    document.getElementById("voiceStatus");
+
+const recordingStatus =
+    document.getElementById("recordingStatus");
+
+const recordingMessage =
+    document.getElementById("recordingMessage");
+
+const audioPlayback =
+    document.getElementById("audioPlayback");
+
+const result =
+    document.getElementById("result");
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let cameraStream = null;
+let microphoneStream = null;
+let mediaRecorder = null;
+let audioChunks = [];
+
+let audioContext = null;
+let analyser = null;
+let microphoneSource = null;
+let voiceAnalysisTimer = null;
+
+let analysisTimer = null;
+let recordingTimer = null;
+
+let analysisStart = 0;
+let recordingStart = 0;
+
+let analyzing = false;
+let recording = false;
+let modelsLoaded = false;
+
+let expressions = [];
+let expressionChanges = 0;
+let lastExpression = null;
+
+let voiceSamples = [];
+let pitchSamples = [];
+let volumeSamples = [];
+let speakingSamples = [];
+
+let defenseRecordingDuration = 0;
+
+const ANALYSIS_DURATION = 15000;
+const DEFENSE_DURATION = 15000;
+
+
+/* =========================================================
+   QUESTION PREVIEW
+========================================================= */
+
+question.addEventListener("input", () => {
+
+    const value =
+        question.value.trim();
+
+    questionPreview.innerText =
+        value || "No question entered.";
+
+});
+
+
+/* =========================================================
+   LOAD MODELS
+========================================================= */
+
+async function loadModels(){
+
+    phase.innerText =
+        "Loading facial-analysis models...";
+
+    try{
+
+        const MODEL_URL =
+            "https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights";
+
+        await faceapi.nets.tinyFaceDetector.loadFromUri(
+            MODEL_URL
+        );
+
+        await faceapi.nets.faceExpressionNet.loadFromUri(
+            MODEL_URL
+        );
+
+        modelsLoaded = true;
+
+        phase.innerText =
+            "Facial-analysis models loaded.";
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        phase.innerText =
+            "Could not load facial-analysis models.";
+
+    }
+
+}
+
+loadModels();
+
+
+/* =========================================================
+   SPEECH ASSISTANT
+========================================================= */
+
+function speak(text,onEnd=null){
+
+    if(!("speechSynthesis" in window)){
+
+        if(onEnd) onEnd();
+
+        return;
+
+    }
+
+    speechSynthesis.cancel();
+
+    const speech =
+        new SpeechSynthesisUtterance(text);
+
+    speech.lang = "en-US";
+    speech.rate = 0.9;
+    speech.pitch = 1;
+    speech.volume = 1;
+
+    voiceIcon.classList.add(
+        "voice-active"
+    );
+
+    voiceStatus.innerText =
+        "Voice assistant speaking...";
+
+    speech.onend = function(){
+
+        voiceIcon.classList.remove(
+            "voice-active"
+        );
+
+        voiceStatus.innerText =
+            "Voice assistant ready";
+
+        if(onEnd){
+            onEnd();
+        }
+
+    };
+
+    speech.onerror = function(){
+
+        voiceIcon.classList.remove(
+            "voice-active"
+        );
+
+        voiceStatus.innerText =
+            "Voice assistant ready";
+
+        if(onEnd){
+            onEnd();
+        }
+
+    };
+
+    speechSynthesis.speak(speech);
+
+}
+
+
+/* =========================================================
+   CAMERA
+========================================================= */
+
+async function startCamera(){
+
+    if(cameraStream){
+        return true;
+    }
+
+    try{
+
+        cameraStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                video:{
+                    facingMode:"user",
+                    width:{ideal:1280},
+                    height:{ideal:720}
+                },
+
+                audio:false
+
+            });
+
+        video.srcObject =
+            cameraStream;
+
+        cameraStatus.innerText =
+            "Camera is active.";
+
+        return true;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        cameraStatus.innerText =
+            "Camera permission was not granted.";
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   MICROPHONE
+========================================================= */
+
+async function startMicrophone(){
+
+    try{
+
+        microphoneStream =
+            await navigator.mediaDevices.getUserMedia({
+
+                audio:{
+                    echoCancellation:true,
+                    noiseSuppression:true,
+                    autoGainControl:true
+                },
+
+                video:false
+
+            });
+
+        return true;
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+        recordingStatus.innerText =
+            "Microphone permission was not granted.";
+
+        return false;
+
+    }
+
+}
+
+
+/* =========================================================
+   AUDIO ANALYSIS
+========================================================= */
+
+function setupAudioAnalysis(){
+
+    if(!microphoneStream){
+        return;
+    }
+
+    try{
+
+        audioContext =
+            new(
+                window.AudioContext ||
+                window.webkitAudioContext
+            )();
+
+        analyser =
+            audioContext.createAnalyser();
+
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.8;
+
+        microphoneSource =
+            audioContext.createMediaStreamSource(
+                microphoneStream
+            );
+
+        microphoneSource.connect(
+            analyser
+        );
+
+        voiceAnalysisTimer =
+            setInterval(
+                collectVoiceSample,
+                100
+            );
+
+    }
+
+    catch(error){
+
+        console.error(error);
+
+    }
+
+}
+
+
+/* =========================================================
+   COLLECT VOICE SAMPLE
+========================================================= */
+
+function collectVoiceSample(){
+
+    if(!analyser){
+        return;
+    }
+
+    const bufferLength =
+        analyser.fftSize;
+
+    const data =
+        new Float32Array(
+            bufferLength
+        );
+
+    analyser.getFloatTimeDomainData(
+        data
+    );
+
+
+    let sum = 0;
+    let peak = 0;
+
+    for(let i=0;i<data.length;i++){
+
+        const value =
+            data[i];
+
+        sum +=
+            value * value;
+
+        peak =
+            Math.max(
+                peak,
+                Math.abs(value)
+            );
+
+    }
+
+    const rms =
+        Math.sqrt(
+            sum / data.length
+        );
+
+    const volume =
+        Math.min(
+            100,
+            Math.round(rms * 500)
+        );
+
+
+    let crossings = 0;
+
+    for(
+        let i=1;
+        i<data.length;
+        i++
+    ){
+
+        if(
+            (data[i-1] >= 0 &&
+             data[i] < 0) ||
+
+            (data[i-1] < 0 &&
+             data[i] >= 0)
+        ){
+
+            crossings++;
+
+        }
+
+    }
+
+    const zeroCrossingRate =
+        crossings / data.length;
+
+    const pitch =
+        estimatePitch(
+            data,
+            audioContext.sampleRate
+        );
+
+    const speaking =
+        rms > 0.015;
+
+
+    volumeSamples.push(volume);
+
+    speakingSamples.push(
+        speaking ? 1 : 0
+    );
+
+    voiceSamples.push({
+        rms,
+        peak,
+        zeroCrossingRate
+    });
+
+    if(
+        pitch > 50 &&
+        pitch < 500
+    ){
+
+        pitchSamples.push(
+            pitch
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   PITCH ESTIMATION
+========================================================= */
+
+function estimatePitch(
+    buffer,
+    sampleRate
+){
+
+    const SIZE =
+        buffer.length;
+
+    let rms = 0;
+
+    for(
+        let i=0;
+        i<SIZE;
+        i++
+    ){
+
+        rms +=
+            buffer[i] *
+            buffer[i];
+
+    }
+
+    rms =
+        Math.sqrt(
+            rms / SIZE
+        );
+
+    if(rms < 0.01){
+        return 0;
+    }
+
+
+    let bestOffset = -1;
+    let bestCorrelation = 0;
+
+    const MIN_FREQUENCY = 50;
+    const MAX_FREQUENCY = 500;
+
+    const minOffset =
+        Math.floor(
+            sampleRate /
+            MAX_FREQUENCY
+        );
+
+    const maxOffset =
+        Math.floor(
+            sampleRate /
+            MIN_FREQUENCY
+        );
+
+
+    for(
+        let offset=minOffset;
+        offset<=maxOffset;
+        offset++
+    ){
+
+        let correlation = 0;
+
+        for(
+            let i=0;
+            i<SIZE-offset;
+            i++
+        ){
+
+            correlation +=
+                buffer[i] *
+                buffer[i+offset];
+
+        }
+
+        correlation /=
+            SIZE-offset;
+
+        if(
+            correlation >
+            bestCorrelation
+        ){
+
+            bestCorrelation =
+                correlation;
+
+            bestOffset =
+                offset;
+
+        }
+
+    }
+
+
+    if(
+        bestOffset === -1 ||
+        bestCorrelation < 0.01
+    ){
+
+        return 0;
+
+    }
+
+    return (
+        sampleRate /
+        bestOffset
+    );
+
+}
+
+
+/* =========================================================
+   STOP AUDIO ANALYSIS
+========================================================= */
+
+function stopAudioAnalysis(){
+
+    if(voiceAnalysisTimer){
+
+        clearInterval(
+            voiceAnalysisTimer
+        );
+
+        voiceAnalysisTimer = null;
+
+    }
+
+}
+
+
+/* =========================================================
+   START RECORDING
+========================================================= */
+
+function startRecording(){
+
+    if(!microphoneStream){
+        return false;
+    }
+
+    audioChunks = [];
+
+    voiceSamples = [];
+    pitchSamples = [];
+    volumeSamples = [];
+    speakingSamples = [];
+
+    try{
+
+        mediaRecorder =
+            new MediaRecorder(
+                microphoneStream
+            );
+
+    }
+
+    catch(error){
+
+        recordingStatus.innerText =
+            "Your browser cannot record audio.";
+
+        return false;
+
+    }
+
+
+    mediaRecorder.ondataavailable =
+        function(event){
+
+            if(event.data.size > 0){
+
+                audioChunks.push(
+                    event.data
+                );
+
+            }
+
+        };
+
+
+    mediaRecorder.onstop =
+        finishRecording;
+
+
+    mediaRecorder.start();
+
+    recording = true;
+
+    recordingStart =
+        Date.now();
+
+    recordingStatus.innerHTML =
+        '<span class="record-dot"></span> Recording your defense...';
+
+    recordingMessage.innerText =
+        "Your defense is being recorded.";
+
+    recordingTimer =
+        setInterval(
+            updateRecordingTimer,
+            100
+        );
+
+    setupAudioAnalysis();
+
+    return true;
+
+}
+
+
+/* =========================================================
+   RECORDING TIMER
+========================================================= */
+
+function updateRecordingTimer(){
+
+    if(!recording){
+        return;
+    }
+
+    const elapsed =
+        Date.now() -
+        recordingStart;
+
+    defenseRecordingDuration =
+        Math.floor(
+            elapsed / 1000
+        );
+
+    const seconds =
+        Math.floor(
+            elapsed / 1000
+        );
+
+    const minutes =
+        Math.floor(
+            seconds / 60
+        );
+
+    const remaining =
+        seconds % 60;
+
+    timer.innerText =
+        String(minutes).padStart(2,"0") +
+        ":" +
+        String(remaining).padStart(2,"0");
+
+    if(
+        elapsed >=
+        DEFENSE_DURATION
+    ){
+
+        stopRecording();
+
+    }
+
+}
+
+
+/* =========================================================
+   STOP RECORDING
+========================================================= */
+
+function stopRecording(){
+
+    if(!recording){
+        return;
+    }
+
+    recording = false;
+
+    stopAudioAnalysis();
+
+    if(recordingTimer){
+
+        clearInterval(
+            recordingTimer
+        );
+
+        recordingTimer = null;
+
+    }
+
+    if(
+        mediaRecorder &&
+        mediaRecorder.state !== "inactive"
+    ){
+
+        mediaRecorder.stop();
+
+    }
+
+}
+
+
+/* =========================================================
+   FINISH RECORDING
+========================================================= */
+
+function finishRecording(){
+
+    const blob =
+        new Blob(
+            audioChunks,
+            {
+                type:"audio/webm"
+            }
+        );
+
+    const url =
+        URL.createObjectURL(
+            blob
+        );
+
+    audioPlayback.src =
+        url;
+
+    audioPlayback.classList.remove(
+        "hidden"
+    );
+
+    recordingStatus.innerText =
+        "Recording complete.";
+
+    recordingMessage.innerText =
+        "Your recorded defense is ready for playback.";
+
+    if(microphoneStream){
+
+        microphoneStream
+            .getTracks()
+            .forEach(
+                track => track.stop()
+            );
+
+        microphoneStream = null;
+
+    }
+
+    if(audioContext){
+
+        audioContext.close();
+
+        audioContext = null;
+
+    }
+
+    finishCombinedAnalysis();
+
+}
+
+
+/* =========================================================
+   FACE ANALYSIS
+========================================================= */
+
+async function runFaceAnalysis(){
+
+    if(!modelsLoaded){
+        return;
+    }
+
+    try{
+
+        const detections =
+            await faceapi
+                .detectAllFaces(
+                    video,
+                    new faceapi.TinyFaceDetectorOptions()
+                )
+                .withFaceExpressions();
+
+
+        ctx.clearRect(
+            0,
+            0,
+            overlay.width,
+            overlay.height
+        );
+
+
+        if(!detections.length){
+            return;
+        }
+
+
+        const resized =
+            faceapi.resizeResults(
+                detections,
+                {
+                    width:video.videoWidth,
+                    height:video.videoHeight
+                }
+            );
+
+
+        faceapi.draw.drawDetections(
+            overlay,
+            resized
+        );
+
+
+        const expression =
+            getDominantExpression(
+                detections[0].expressions
+            );
+
+
+        if(
+            lastExpression &&
+            expression !== lastExpression
+        ){
+
+            expressionChanges++;
+
+        }
+
+        lastExpression =
+            expression;
+
+
+        expressions.push({
+            emotion:expression,
+            time:Date.now()
+        });
+
+    }
+
+    catch(error){
+
+        console.error(
+            "Face analysis:",
+            error
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   DOMINANT EXPRESSION
+========================================================= */
+
+function getDominantExpression(
+    expressions
+){
+
+    let dominant = "neutral";
+    let highest = 0;
+
+    for(
+        const emotion in expressions
+    ){
+
+        if(
+            expressions[emotion] >
+            highest
+        ){
+
+            highest =
+                expressions[emotion];
+
+            dominant =
+                emotion;
+
+        }
+
+    }
+
+    return dominant;
+
+}
+
+
+/* =========================================================
+   BEGIN ANALYSIS
+========================================================= */
+
+async function beginAnalysis(){
+
+    if(analyzing){
+        return;
+    }
+
+    analyzing = true;
+
+    expressions = [];
+    expressionChanges = 0;
+    lastExpression = null;
+
+    progressBar.style.width =
+        "0%";
+
+    result.style.display =
+        "none";
+
+    analysisStart =
+        Date.now();
+
+    startBtn.disabled = true;
+    stopBtn.disabled = false;
+
+    phase.innerText =
+        "Analysis is running...";
+
+    timer.innerText =
+        "00:00";
+
+
+    await startCamera();
+
+
+    const microphoneReady =
+        await startMicrophone();
+
+
+    if(microphoneReady){
+
+        speak(
+            "The question has been asked. You may now defend yourself. Please speak naturally.",
+            () => {
+
+                setTimeout(
+                    () => {
+
+                        if(analyzing){
+                            startRecording();
+                        }
+
+                    },
+                    500
+                );
+
+            }
+        );
+
+    }
+
+    else{
+
+        speak(
+            "The microphone is not available. I will continue with facial-expression analysis."
+        );
+
+    }
+
+
+    analysisTimer =
+        setInterval(
+            async () => {
+
+                if(!analyzing){
+                    return;
+                }
+
+                await runFaceAnalysis();
+
+                const elapsed =
+                    Date.now() -
+                    analysisStart;
+
+                const percent =
+                    Math.min(
+                        100,
+                        (
+                            elapsed /
+                            ANALYSIS_DURATION
+                        ) * 100
+                    );
+
+                progressBar.style.width =
+                    percent + "%";
+
+
+                if(
+                    elapsed >=
+                    ANALYSIS_DURATION
+                ){
+
+                    if(recording){
+                        stopRecording();
+                    }
+                    else{
+                        finishCombinedAnalysis();
+                    }
+
+                }
+
+            },
+            250
+        );
+
+}
+
+
+/* =========================================================
+   FINISH ANALYSIS
+========================================================= */
+
+function finishCombinedAnalysis(){
+
+    if(!analyzing){
+        return;
+    }
+
+    analyzing = false;
+
+    if(analysisTimer){
+
+        clearInterval(
+            analysisTimer
+        );
+
+        analysisTimer = null;
+
+    }
+
+    stopAudioAnalysis();
+
+    stopBtn.disabled = true;
+    startBtn.disabled = false;
+
+    progressBar.style.width =
+        "100%";
+
+
+    const elapsed =
+        Math.round(
+            (
+                Date.now() -
+                analysisStart
+            ) / 1000
+        );
+
+
+    document.getElementById(
+        "timeMetric"
+    ).innerText =
+        elapsed + " sec";
+
+
+    document.getElementById(
+        "changeMetric"
+    ).innerText =
+        expressionChanges;
+
+
+    /* FACIAL SCORE */
+
+    let facialVariation = 0;
+    let dominant = "No face";
+
+
+    if(expressions.length > 0){
+
+        const counts = {};
+
+        expressions.forEach(
+            item => {
+
+                counts[item.emotion] =
+                    (
+                        counts[item.emotion] ||
+                        0
+                    ) + 1;
+
+            }
+        );
+
+
+        let highest = 0;
+
+        for(
+            const emotion in counts
+        ){
+
+            if(
+                counts[emotion] >
+                highest
+            ){
+
+                highest =
+                    counts[emotion];
+
+                dominant =
+                    emotion;
+
+            }
+
+        }
+
+
+        facialVariation =
+            Math.min(
+                100,
+                Math.round(
+                    (
+                        expressionChanges /
+                        Math.max(
+                            1,
+                            expressions.length
+                        )
+                    ) * 100
+                )
+            );
+
+    }
+
+
+    /* VOICE SCORE */
+
+    const voiceVariation =
+        calculateVoiceVariation();
+
+
+    /* COMBINED SCORE */
+
+    let combinedScore;
+
+
+    if(
+        expressions.length === 0 &&
+        pitchSamples.length === 0 &&
+        voiceSamples.length === 0
+    ){
+
+        combinedScore = 0;
+
+    }
+
+    else if(
+        pitchSamples.length === 0 &&
+        voiceSamples.length === 0
+    ){
+
+        combinedScore =
+            facialVariation;
+
+    }
+
+    else if(
+        expressions.length === 0
+    ){
+
+        combinedScore =
+            voiceVariation;
+
+    }
+
+    else{
+
+        combinedScore =
+            Math.round(
+                (
+                    facialVariation * 0.5
+                ) +
+                (
+                    voiceVariation * 0.5
+                )
+            );
+
+    }
+
+
+    /* VERDICT */
+
+    let verdict;
+
+
+    if(combinedScore >= 60){
+
+        verdict =
+            "LIKELY LYING";
+
+    }
+
+    else if(combinedScore <= 20){
+
+        verdict =
+            "LIKELY TRUTHFUL";
+
+    }
+
+    else{
+
+        verdict =
+            "NEUTRAL";
+
+    }
+
+
+    /* DISPLAY */
+
+    document.getElementById(
+        "emotionMetric"
+    ).innerText =
+        capitalize(dominant);
+
+    document.getElementById(
+        "faceVariationMetric"
+    ).innerText =
+        facialVariation + "%";
+
+    document.getElementById(
+        "voiceVariationMetric"
+    ).innerText =
+        voiceVariation + "%";
+
+    document.getElementById(
+        "combinedMetric"
+    ).innerText =
+        combinedScore + "%";
+
+    document.getElementById(
+        "verdict"
+    ).innerText =
+        verdict;
+
+    document.getElementById(
+        "verdictMetric"
+    ).innerText =
+        verdict;
+
+
+    /* VOICE METRICS */
+
+    const avgPitch =
+        calculateAverage(
+            pitchSamples
+        );
+
+    const pitchVariation =
+        calculatePitchVariation(
+            pitchSamples
+        );
+
+    const activity =
+        calculateAverage(
+            speakingSamples
+        ) * 100;
+
+
+    document.getElementById(
+        "pitchMetric"
+    ).innerText =
+        avgPitch > 0
+        ? Math.round(avgPitch) + " Hz"
+        : "Unavailable";
+
+
+    document.getElementById(
+        "pitchVariationMetric"
+    ).innerText =
+        pitchVariation > 0
+        ? Math.round(pitchVariation) + " Hz"
+        : "Unavailable";
+
+
+    document.getElementById(
+        "activityMetric"
+    ).innerText =
+        Math.round(activity) + "%";
+
+
+    document.getElementById(
+        "recordingTimeMetric"
+    ).innerText =
+        defenseRecordingDuration + " sec";
+
+
+    /* RESULT TEXT */
+
+    let message;
+
+
+    if(verdict === "LIKELY LYING"){
+
+        message =
+            "The combined experimental analysis detected relatively high variation in the facial and voice signals. This does not prove that the person is lying.";
+
+    }
+
+    else if(verdict === "LIKELY TRUTHFUL"){
+
+        message =
+            "The combined experimental analysis detected relatively low variation in the measured signals. This does not prove that the person is telling the truth.";
+
+    }
+
+    else{
+
+        message =
+            "The combined facial and voice signals were inconclusive.";
+
+    }
+
+
+    document.getElementById(
+        "resultText"
+    ).innerText =
+        message;
+
+
+    result.style.display =
+        "block";
+
+
+    /* SPOKEN RESULT */
+
+    setTimeout(
+        () => {
+
+            speak(
+                "Analysis complete. " +
+                "The experimental result is " +
+                verdict.toLowerCase() +
+                ". " +
+                "The facial variation score was " +
+                facialVariation +
+                " percent. " +
+                "The voice variation score was " +
+                voiceVariation +
+                " percent. " +
+                "The combined score was " +
+                combinedScore +
+                " percent. " +
+                "Remember, this is only an experimental behavioral analysis and cannot reliably determine whether someone is lying."
+            );
+
+        },
+        600
+    );
+
+}
+
+
+/* =========================================================
+   VOICE VARIATION
+========================================================= */
+
+function calculateVoiceVariation(){
+
+    if(
+        volumeSamples.length === 0 &&
+        pitchSamples.length === 0
+    ){
+
+        return 0;
+
+    }
+
+
+    let pitchScore = 0;
+    let volumeScore = 0;
+    let activityScore = 0;
+
+
+    if(pitchSamples.length > 1){
+
+        const avg =
+            calculateAverage(
+                pitchSamples
+            );
+
+        const standardDeviation =
+            calculateStandardDeviation(
+                pitchSamples
+            );
+
+        if(avg > 0){
+
+            pitchScore =
+                Math.min(
+                    100,
+                    Math.round(
+                        (
+                            standardDeviation /
+                            avg
+                        ) * 300
+                    )
+                );
+
+        }
+
+    }
+
+
+    if(volumeSamples.length > 1){
+
+        const volumeSD =
+            calculateStandardDeviation(
+                volumeSamples
+            );
+
+        const volumeAvg =
+            calculateAverage(
+                volumeSamples
+            );
+
+        if(volumeAvg > 0){
+
+            volumeScore =
+                Math.min(
+                    100,
+                    Math.round(
+                        (
+                            volumeSD /
+                            volumeAvg
+                        ) * 200
+                    )
+                );
+
+        }
+
+    }
+
+
+    if(speakingSamples.length > 0){
+
+        const activity =
+            calculateAverage(
+                speakingSamples
+            );
+
+        const activityDifference =
+            Math.abs(
+                activity - 0.6
+            );
+
+        activityScore =
+            Math.min(
+                100,
+                Math.round(
+                    activityDifference * 180
+                )
+            );
+
+    }
+
+
+    return Math.round(
+        (
+            pitchScore * 0.5
+        ) +
+        (
+            volumeScore * 0.35
+        ) +
+        (
+            activityScore * 0.15
+        )
+    );
+
+}
+
+
+/* =========================================================
+   MATH
+========================================================= */
+
+function calculateAverage(array){
+
+    if(!array.length){
+        return 0;
+    }
+
+    return (
+        array.reduce(
+            (a,b) => a+b,
+            0
+        ) /
+        array.length
+    );
+
+}
+
+
+function calculateStandardDeviation(array){
+
+    if(array.length < 2){
+        return 0;
+    }
+
+    const average =
+        calculateAverage(array);
+
+    const variance =
+        calculateAverage(
+            array.map(
+                value =>
+                    Math.pow(
+                        value-average,
+                        2
+                    )
+            )
+        );
+
+    return Math.sqrt(variance);
+
+}
+
+
+function calculatePitchVariation(array){
+
+    if(array.length < 2){
+        return 0;
+    }
+
+    return calculateStandardDeviation(
+        array
+    );
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+startBtn.addEventListener(
+    "click",
+    async () => {
+
+        const questionText =
+            question.value.trim();
+
+
+        if(!questionText){
+
+            alert(
+                "Please enter a question first."
+            );
+
+            return;
+
+        }
+
+
+        startBtn.disabled = true;
+
+        phase.innerText =
+            "Preparing camera and microphone...";
+
+
+        const cameraReady =
+            await startCamera();
+
+
+        if(!cameraReady){
+
+            startBtn.disabled = false;
+
+            return;
+
+        }
+
+
+        speak(
+            "Here is the question. " +
+            questionText,
+            () => {
+
+                setTimeout(
+                    () => {
+
+                        if(!analyzing){
+
+                            beginAnalysis();
+
+                        }
+
+                    },
+                    1200
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================================================
+   STOP
+========================================================= */
+
+stopBtn.addEventListener(
+    "click",
+    () => {
+
+        if(recording){
+
+            stopRecording();
+
+        }
+
+        else{
+
+            finishCombinedAnalysis();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+resetBtn.addEventListener(
+    "click",
+    () => {
+
+        analyzing = false;
+        recording = false;
+
+
+        if(analysisTimer){
+
+            clearInterval(
+                analysisTimer
+            );
+
+            analysisTimer = null;
+
+        }
+
+
+        if(recordingTimer){
+
+            clearInterval(
+                recordingTimer
+            );
+
+            recordingTimer = null;
+
+        }
+
+
+        stopAudioAnalysis();
+
+
+        if(
+            mediaRecorder &&
+            mediaRecorder.state !== "inactive"
+        ){
+
+            mediaRecorder.stop();
+
+        }
+
+
+        if(cameraStream){
+
+            cameraStream
+                .getTracks()
+                .forEach(
+                    track => track.stop()
+                );
+
+            cameraStream = null;
+
+        }
+
+
+        if(microphoneStream){
+
+            microphoneStream
+                .getTracks()
+                .forEach(
+                    track => track.stop()
+                );
+
+            microphoneStream = null;
+
+        }
+
+
+        if(audioContext){
+
+            audioContext.close();
+
+            audioContext = null;
+
+        }
+
+
+        if("speechSynthesis" in window){
+
+            speechSynthesis.cancel();
+
+        }
+
+
+        video.srcObject = null;
+
+
+        ctx.clearRect(
+            0,
+            0,
+            overlay.width,
+            overlay.height
+        );
+
+
+        question.value = "";
+
+        questionPreview.innerText =
+            "No question entered.";
+
+
+        expressions = [];
+        expressionChanges = 0;
+        lastExpression = null;
+
+        voiceSamples = [];
+        pitchSamples = [];
+        volumeSamples = [];
+        speakingSamples = [];
+
+        defenseRecordingDuration = 0;
+
+
+        progressBar.style.width =
+            "0%";
+
+        timer.innerText =
+            "00:00";
+
+        cameraStatus.innerText =
+            "Camera not started.";
+
+        voiceStatus.innerText =
+            "Voice assistant ready";
+
+        recordingStatus.innerText =
+            "Microphone not recording.";
+
+        recordingMessage.innerText =
+            "No recording yet.";
+
+        audioPlayback.pause();
+
+        audioPlayback.src = "";
+
+        audioPlayback.classList.add(
+            "hidden"
+        );
+
+        phase.innerText =
+            "Waiting to begin.";
+
+        result.style.display =
+            "none";
+
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+
+    }
+);
+
+
+/* =========================================================
+   CAPITALIZE
+========================================================= */
+
+function capitalize(text){
+
+    if(!text){
+        return "";
+    }
+
+    return (
+        text.charAt(0).toUpperCase() +
+        text.slice(1)
+    );
+
+}
+
+
+/* =========================================================
+   VIDEO SIZE
+========================================================= */
+
+video.addEventListener(
+    "loadedmetadata",
+    () => {
+
+        overlay.width =
+            video.videoWidth;
+
+        overlay.height =
+            video.videoHeight;
+
+    }
+);
+
+</script>
+
+</body>
+</html>
