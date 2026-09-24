@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keep Fit Web</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+:root{
+    --green:#10b981;
+    --dark:#047857;
+    --orange:#f59e0b;
+    --red:#ef4444;
+    --blue:#2563eb;
+    --purple:#7c3aed;
+    --bg:#f3f6f8;
+    --card:#fff;
+    --text:#172033;
+    --muted:#64748b;
+    --border:#dbe3ea;
+}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    transition:.3s;
+}
+
+body.dark{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --text:#f8fafc;
+    --muted:#cbd5e1;
+    --border:#334155;
+}
+
+/* HEADER */
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:17px 5%;
+    color:white;
+    background:linear-gradient(135deg,#047857,#10b981);
+    box-shadow:0 5px 20px #0003;
+}
+
+.logo{
+    font-size:27px;
+    font-weight:900;
+}
+
+nav{
+    display:flex;
+    align-items:center;
+    gap:18px;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.theme-btn{
+    border:none;
+    padding:10px 15px;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+/* HERO */
+.hero{
+    min-height:540px;
+    display:flex;
+    align-items:center;
+    padding:80px 7%;
+    color:white;
+    background:
+      linear-gradient(#0008,#0008),
+      url("https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1600&q=80")
+      center/cover;
+}
+
+.hero-content{
+    max-width:720px;
+}
+
+.hero h1{
+    font-size:clamp(45px,7vw,78px);
+    margin-bottom:18px;
+}
+
+.hero p{
+    font-size:21px;
+    line-height:1.7;
+}
+
+.hero button{
+    margin-top:25px;
+    padding:16px 28px;
+    border:none;
+    border-radius:30px;
+    background:var(--orange);
+    color:white;
+    font-weight:bold;
+    font-size:16px;
+    cursor:pointer;
+}
+
+/* GENERAL */
+section{
+    padding:70px 6%;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:40px;
+}
+
+.section-title h2{
+    font-size:36px;
+    margin-bottom:10px;
+}
+
+.section-title p{
+    color:var(--muted);
+}
+
+/* SIGNUP */
+.signup{
+    max-width:600px;
+    margin:auto;
+    padding:35px;
+    border-radius:22px;
+    background:var(--card);
+    box-shadow:0 8px 30px #0002;
+}
+
+.input-group{
+    margin-bottom:20px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:bold;
+}
+
+.input-group input,
+.input-group select{
+    width:100%;
+    padding:14px;
+    border:1px solid var(--border);
+    border-radius:10px;
+    color:var(--text);
+    background:transparent;
+    font-size:16px;
+}
+
+.submit{
+    width:100%;
+    border:none;
+    padding:16px;
+    border-radius:10px;
+    background:var(--green);
+    color:white;
+    font-size:17px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* DASHBOARD */
+#dashboard{
+    display:none;
+}
+
+.stats{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:20px;
+}
+
+.stat{
+    background:var(--card);
+    padding:25px;
+    border-radius:20px;
+    text-align:center;
+    box-shadow:0 6px 20px #0002;
+}
+
+.stat-icon{
+    font-size:35px;
+}
+
+.stat span{
+    display:block;
+    color:var(--muted);
+    margin-top:8px;
+}
+
+.stat strong{
+    display:block;
+    color:var(--green);
+    font-size:28px;
+    margin-top:7px;
+}
+
+/* VOICE ASSISTANT */
+.voice-panel{
+    max-width:900px;
+    margin:35px auto;
+    padding:35px;
+    border-radius:22px;
+    background:var(--card);
+    text-align:center;
+    box-shadow:0 8px 25px #0002;
+}
+
+.voice-circle{
+    width:100px;
+    height:100px;
+    margin:auto;
+    display:grid;
+    place-items:center;
+    border-radius:50%;
+    background:var(--green);
+    color:white;
+    font-size:45px;
+}
+
+.voice-panel h3{
+    margin:18px 0 10px;
+}
+
+.voice-status{
+    color:var(--muted);
+    min-height:25px;
+    margin-bottom:20px;
+}
+
+.voice-buttons button{
+    border:none;
+    padding:13px 20px;
+    margin:5px;
+    border-radius:25px;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.start{
+    background:var(--green);
+}
+
+.stop{
+    background:var(--red);
+}
+
+.motivate{
+    background:var(--orange);
+}
+
+.test{
+    background:var(--blue);
+}
+
+/* CALORIE PROGRESS */
+.calorie-section{
+    max-width:1100px;
+    margin:35px auto;
+}
+
+.calorie-dashboard{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:25px;
+}
+
+.calorie-card{
+    background:var(--card);
+    padding:30px;
+    border-radius:22px;
+    box-shadow:0 7px 25px #0002;
+}
+
+.calorie-card h3{
+    margin-bottom:20px;
+}
+
+.calorie-number{
+    font-size:50px;
+    font-weight:900;
+    color:var(--orange);
+}
+
+.progress-container{
+    width:100%;
+    height:25px;
+    background:#e2e8f0;
+    border-radius:20px;
+    overflow:hidden;
+    margin:20px 0;
+}
+
+.progress-bar{
+    width:0%;
+    height:100%;
+    background:linear-gradient(90deg,#10b981,#f59e0b);
+    transition:1s;
+}
+
+.calorie-target{
+    display:flex;
+    justify-content:space-between;
+    color:var(--muted);
+}
+
+/* CALORIE ILLUSTRATIONS */
+.calorie-illustrations{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.burn-card{
+    padding:18px;
+    border-radius:16px;
+    background:rgba(16,185,129,.10);
+    text-align:center;
+}
+
+.burn-icon{
+    font-size:48px;
+}
+
+.burn-card h4{
+    margin:8px 0;
+}
+
+.burn-card p{
+    color:var(--muted);
+    font-size:14px;
+}
+
+/* ROUTINES */
+.routine-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:25px;
+}
+
+.routine{
+    overflow:hidden;
+    border-radius:20px;
+    background:var(--card);
+    box-shadow:0 7px 25px #0002;
+}
+
+.routine img{
+    width:100%;
+    height:240px;
+    object-fit:cover;
+}
+
+.routine-content{
+    padding:22px;
+}
+
+.badge{
+    display:inline-block;
+    padding:7px 12px;
+    border-radius:20px;
+    background:var(--orange);
+    color:white;
+    font-size:13px;
+    margin-bottom:12px;
+}
+
+.routine h3{
+    color:var(--green);
+    margin-bottom:12px;
+}
+
+.routine ul{
+    padding-left:20px;
+    line-height:2;
+}
+
+/* EXERCISES */
+.exercise-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:22px;
+}
+
+.exercise{
+    overflow:hidden;
+    border-radius:18px;
+    background:var(--card);
+    box-shadow:0 6px 20px #0002;
+}
+
+.exercise img{
+    width:100%;
+    height:190px;
+    object-fit:cover;
+}
+
+.exercise-content{
+    padding:18px;
+}
+
+.exercise-content h3{
+    margin-bottom:8px;
+}
+
+.exercise-content p{
+    color:var(--muted);
+    line-height:1.5;
+}
+
+/* SCHEDULE */
+.table-wrapper{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    min-width:850px;
+    border-collapse:collapse;
+    background:var(--card);
+    border-radius:15px;
+    overflow:hidden;
+    box-shadow:0 6px 20px #0002;
+}
+
+th{
+    padding:17px;
+    background:var(--dark);
+    color:white;
+}
+
+td{
+    padding:17px;
+    text-align:center;
+    border-bottom:1px solid var(--border);
+}
+
+input[type="checkbox"]{
+    width:20px;
+    height:20px;
+    cursor:pointer;
+}
+
+/* MOTIVATION */
+.motivation{
+    text-align:center;
+    color:white;
+    background:linear-gradient(135deg,#047857,#10b981);
+}
+
+.motivation h2{
+    font-size:40px;
+    margin-bottom:15px;
+}
+
+.motivation p{
+    font-size:20px;
+}
+
+/* FOOTER */
+footer{
+    padding:30px;
+    text-align:center;
+    background:#020617;
+    color:white;
+}
+
+/* MOBILE */
+@media(max-width:1000px){
+
+    .stats{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .exercise-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .routine-grid{
+        grid-template-columns:1fr;
+    }
+
+}
+
+@media(max-width:700px){
+
+    header{
+        flex-direction:column;
+        gap:15px;
+    }
+
+    nav{
+        flex-wrap:wrap;
+        justify-content:center;
+    }
+
+    .hero{
+        text-align:center;
+    }
+
+    .stats,
+    .exercise-grid,
+    .calorie-dashboard{
+        grid-template-columns:1fr;
+    }
+
+    .calorie-illustrations{
+        grid-template-columns:1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+
+    <div class="logo">💪 Keep Fit Web</div>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#dashboard">Dashboard</a>
+        <a href="#routines">Routines</a>
+        <a href="#schedule">Schedule</a>
+
+        <button class="theme-btn" onclick="toggleDarkMode()">
+            🌙 Theme
+        </button>
+    </nav>
+
+</header>
+
+
+<!-- HERO -->
+<section class="hero" id="home">
+
+    <div class="hero-content">
+
+        <h1>Keep Fit Web</h1>
+
+        <p>
+            Your personal fitness companion with exercise routines,
+            calorie progress, daily schedules and a personalized
+            voice assistant that keeps you motivated.
+        </p>
+
+        <button onclick="goSignup()">
+            Start My Fitness Journey
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- SIGNUP -->
+<section id="signup">
+
+    <div class="section-title">
+
+        <h2>🏃 Create Your Fitness Profile</h2>
+
+        <p>
+            Enter your details to personalize your fitness dashboard.
+        </p>
+
+    </div>
+
+    <div class="signup">
+
+        <form id="signupForm">
+
+            <div class="input-group">
+
+                <label>Full Name</label>
+
+                <input
+                    id="name"
+                    type="text"
+                    placeholder="Enter your name"
+                    required
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Age</label>
+
+                <input
+                    id="age"
+                    type="number"
+                    min="10"
+                    max="120"
+                    placeholder="Enter your age"
+                    required
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Weight (kg)</label>
+
+                <input
+                    id="weight"
+                    type="number"
+                    min="20"
+                    max="400"
+                    placeholder="Enter your weight"
+                    required
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label>Voice Assistant</label>
+
+                <select id="voiceGender">
+                    <option value="female">
+                        👩 Female Voice
+                    </option>
+
+                    <option value="male">
+                        👨 Male Voice
+                    </option>
+                </select>
+
+            </div>
+
+            <button class="submit">
+                Create My Fitness Profile
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+
+<!-- DASHBOARD -->
+<section id="dashboard">
+
+    <div class="section-title">
+
+        <h2 id="welcome">
+            Welcome!
+        </h2>
+
+        <p>
+            Your personalized fitness dashboard
+        </p>
+
+    </div>
+
+
+    <div class="stats">
+
+        <div class="stat">
+            <div class="stat-icon">👤</div>
+            <span>Name</span>
+            <strong id="displayName">---</strong>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">🎂</div>
+            <span>Age</span>
+            <strong id="displayAge">---</strong>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">⚖️</div>
+            <span>Weight</span>
+            <strong id="displayWeight">---</strong>
+        </div>
+
+        <div class="stat">
+            <div class="stat-icon">🔥</div>
+            <span>Calories Burned</span>
+            <strong id="totalCalories">0 kcal</strong>
+        </div>
+
+    </div>
+
+
+    <!-- VOICE ASSISTANT -->
+    <div class="voice-panel">
+
+        <div class="voice-circle">
+            🎙️
+        </div>
+
+        <h3>
+            Keep Fit Voice Assistant
+        </h3>
+
+        <p class="voice-status" id="voiceStatus">
+            Your fitness assistant is ready.
+        </p>
+
+        <div>
+
+            <button
+                class="start"
+                onclick="startReminders()">
+                🔊 Start Reminders
+            </button>
+
+            <button
+                class="stop"
+                onclick="stopReminders()">
+                🔇 Stop Reminders
+            </button>
+
+            <button
+                class="motivate"
+                onclick="motivate()">
+                🔥 Motivate Me
+            </button>
+
+            <button
+                class="test"
+                onclick="testVoice()">
+                🎙️ Test Voice
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- CALORIE PROGRESS -->
+    <div class="calorie-section">
+
+        <div class="calorie-dashboard">
+
+            <div class="calorie-card">
+
+                <h3>
+                    🔥 Today's Calorie Progress
+                </h3>
+
+                <div class="calorie-number"
+                     id="calorieNumber">
+                    0
+                </div>
+
+                <p>
+                    calories burned
+                </p>
+
+                <div class="progress-container">
+
+                    <div
+                        class="progress-bar"
+                        id="calorieBar">
+                    </div>
+
+                </div>
+
+                <div class="calorie-target">
+
+                    <span>
+                        Goal: <b id="calorieGoal">300</b> kcal
+                    </span>
+
+                    <span id="caloriePercent">
+                        0%
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="calorie-card">
+
+                <h3>
+                    🏃 Calories You Can Burn
+                </h3>
+
+                <div class="calorie-illustrations">
+
+                    <div class="burn-card">
+
+                        <div class="burn-icon">
+                            🚶
+                        </div>
+
+                        <h4>Walking</h4>
+
+                        <p>
+                            ~150 kcal / 30 min
+                        </p>
+
+                    </div>
+
+
+                    <div class="burn-card">
+
+                        <div class="burn-icon">
+                            🏃
+                        </div>
+
+                        <h4>Jogging</h4>
+
+                        <p>
+                            ~250 kcal / 30 min
+                        </p>
+
+                    </div>
+
+
+                    <div class="burn-card">
+
+                        <div class="burn-icon">
+                            🏋️
+                        </div>
+
+                        <h4>Strength</h4>
+
+                        <p>
+                            ~180 kcal / 30 min
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ROUTINES -->
+<section id="routines">
+
+    <div class="section-title">
+
+        <h2>
+            ⏰ Morning, Afternoon & Evening
+        </h2>
+
+        <p>
+            Follow your daily exercise routines.
+        </p>
+
+    </div>
+
+
+    <div class="routine-grid">
+
+        <!-- MORNING -->
+        <div class="routine">
+
+            <img
+                src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=900&q=80"
+                alt="Morning workout"
+            >
+
+            <div class="routine-content">
+
+                <span class="badge">
+                    🌅 MORNING — 7:00 AM
+                </span>
+
+                <h3>
+                    Morning Energy
+                </h3>
+
+                <ul>
+                    <li>5 min warm-up</li>
+                    <li>15 squats</li>
+                    <li>10 push-ups</li>
+                    <li>20 jumping jacks</li>
+                    <li>30 sec plank</li>
+                    <li>5 min stretching</li>
+                </ul>
+
+                <button
+                    onclick="burnCalories(80)"
+                    class="submit">
+                    Complete Routine — +80 kcal
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- AFTERNOON -->
+        <div class="routine">
+
+            <img
+                src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=900&q=80"
+                alt="Afternoon workout"
+            >
+
+            <div class="routine-content">
+
+                <span class="badge">
+                    ☀️ AFTERNOON — 2:00 PM
+                </span>
+
+                <h3>
+                    Afternoon Boost
+                </h3>
+
+                <ul>
+                    <li>5 min walking</li>
+                    <li>15 lunges</li>
+                    <li>15 squats</li>
+                    <li>20 mountain climbers</li>
+                    <li>30 sec plank</li>
+                    <li>5 min stretching</li>
+                </ul>
+
+                <button
+                    onclick="burnCalories(100)"
+                    class="submit">
+                    Complete Routine — +100 kcal
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- EVENING -->
+        <div class="routine">
+
+            <img
+                src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=900&q=80"
+                alt="Evening workout"
+            >
+
+            <div class="routine-content">
+
+                <span class="badge">
+                    🌙 EVENING — 6:30 PM
+                </span>
+
+                <h3>
+                    Evening Relaxation
+                </h3>
+
+                <ul>
+                    <li>10 min walking</li>
+                    <li>15 squats</li>
+                    <li>10 lunges per leg</li>
+                    <li>30 sec plank</li>
+                    <li>Gentle stretching</li>
+                    <li>Deep breathing</li>
+                </ul>
+
+                <button
+                    onclick="burnCalories(70)"
+                    class="submit">
+                    Complete Routine — +70 kcal
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- FITNESS POSES -->
+<section>
+
+    <div class="section-title">
+
+        <h2>
+            🏋️ Fitness Pose Gallery
+        </h2>
+
+        <p>
+            Exercise illustrations to guide your movements.
+        </p>
+
+    </div>
+
+
+    <div class="exercise-grid">
+
+        <div class="exercise">
+
+            <img
+                src="https://images.unsplash.com/photo-1566241142559-40e1dab266c6?auto=format&fit=crop&w=700&q=80"
+                alt="Squat"
+            >
+
+            <div class="exercise-content">
+
+                <h3>
+                    Squats
+                </h3>
+
+                <p>
+                    Strengthen your legs and lower body.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="exercise">
+
+            <img
+                src="https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=700&q=80"
+                alt="Push ups"
+            >
+
+            <div class="exercise-content">
+
+                <h3>
+                    Push-Ups
+                </h3>
+
+                <p>
+                    Work your chest, shoulders and arms.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="exercise">
+
+            <img
+                src="https://images.unsplash.com/photo-1517964603305-11c0f6f66012?auto=format&fit=crop&w=700&q=80"
+                alt="Plank"
+            >
+
+            <div class="exercise-content">
+
+                <h3>
+                    Plank
+                </h3>
+
+                <p>
+                    Strengthen your core and improve stability.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <div class="exercise">
+
+            <img
+                src="https://images.unsplash.com/photo-1434682881908-b43d0467b798?auto=format&fit=crop&w=700&q=80"
+                alt="Stretching"
+            >
+
+            <div class="exercise-content">
+
+                <h3>
+                    Stretching
+                </h3>
+
+                <p>
+                    Help your body cool down after exercising.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- WEEKLY SCHEDULE -->
+<section id="schedule">
+
+    <div class="section-title">
+
+        <h2>
+            📅 Daily Fitness Schedule
+        </h2>
+
+        <p>
+            Tick each exercise after completing it.
+        </p>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+        <table>
+
+            <thead>
+
+                <tr>
+                    <th>Day</th>
+                    <th>Morning</th>
+                    <th>Afternoon</th>
+                    <th>Evening</th>
+                </tr>
+
+            </thead>
+
+            <tbody>
+
+                <tr>
+                    <td>Monday</td>
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Cardio
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Squats
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Stretching
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>Tuesday</td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Walking
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Push-Ups
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Yoga
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>Wednesday</td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Cardio
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Lunges
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Stretching
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>Thursday</td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Walking
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Squats
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Core
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>Friday</td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Cardio
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Full Body
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Stretching
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>Saturday</td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Walking
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Full Body
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Relaxation
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>Sunday</td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Light Walk
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Stretching
+                    </td>
+
+                    <td>
+                        <input type="checkbox"
+                               onchange="scheduleProgress()">
+                        Rest
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</section>
+
+
+<!-- MOTIVATION -->
+<section class="motivation">
+
+    <h2>
+        🔥 Keep Moving!
+    </h2>
+
+    <p id="motivationText">
+        Every small step counts. Keep working toward your goals!
+    </p>
+
+</section>
+
+
+<!-- FOOTER -->
+<footer>
+
+    <p>
+        © 2026 Keep Fit Web — designed by Ralph
+    </p>
+
+</footer>
+
+
+<script>
+
+let userName = "";
+let selectedGender = "female";
+let reminderTimer = null;
+let calories = 0;
+
+
+/* MOTIVATIONAL MESSAGES */
+
+const messages = [
+
+    "You can do it! Keep moving!",
+
+    "Great job! Stay consistent and keep going.",
+
+    "Every step takes you closer to your fitness goals.",
+
+    "Your future self will thank you for exercising today.",
+
+    "Do not give up. Keep moving forward.",
+
+    "Stay strong and believe in yourself.",
+
+    "A little exercise today is better than none.",
+
+    "You are doing great. Keep going!",
+
+    "Remember to drink water and stay active.",
+
+    "Keep pushing, ",
+
+    "Your effort today matters. Keep going!"
+
+];
+
+
+/* GO TO SIGNUP */
+
+function goSignup(){
+
+    document
+    .getElementById("signup")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+/* FIND A MALE OR FEMALE VOICE */
+
+function getVoice(){
+
+    const voices =
+        speechSynthesis.getVoices();
+
+    if(!voices.length)
+        return null;
+
+    let voice = null;
+
+    if(selectedGender === "female"){
+
+        voice = voices.find(v =>
+            /female|zira|samantha|susan|karen|google us english/i
+            .test(v.name)
+        );
+
+    }else{
+
+        voice = voices.find(v =>
+            /male|david|daniel|alex|mark|george|google uk english male/i
+            .test(v.name)
+        );
+
+    }
+
+    return voice || voices[0];
+
+}
+
+
+/* SPEAK */
+
+function speak(text){
+
+    if(!("speechSynthesis" in window)){
+
+        alert(
+            "Your browser does not support voice assistance."
+        );
+
+        return;
+
+    }
+
+    speechSynthesis.cancel();
+
+    const speech =
+        new SpeechSynthesisUtterance(text);
+
+    speech.rate = 0.95;
+    speech.pitch = selectedGender === "female"
+        ? 1.15
+        : 0.85;
+
+    speech.volume = 1;
+
+    const voice = getVoice();
+
+    if(voice){
+        speech.voice = voice;
+    }
+
+    speechSynthesis.speak(speech);
+
+    document.getElementById(
+        "voiceStatus"
+    ).textContent = text;
+
+}
+
+
+/* SIGNUP */
+
+document
+.getElementById("signupForm")
+.addEventListener("submit",function(e){
+
+    e.preventDefault();
+
+    userName =
+        document.getElementById("name")
+        .value.trim();
+
+    const age =
+        document.getElementById("age")
+        .value;
+
+    const weight =
+        document.getElementById("weight")
+        .value;
+
+    selectedGender =
+        document.getElementById("voiceGender")
+        .value;
+
+
+    document.getElementById(
+        "displayName"
+    ).textContent = userName;
+
+
+    document.getElementById(
+        "displayAge"
+    ).textContent = age;
+
+
+    document.getElementById(
+        "displayWeight"
+    ).textContent =
+        weight + " kg";
+
+
+    document.getElementById(
+        "welcome"
+    ).textContent =
+        "Welcome, " + userName + "!";
+
+
+    document.getElementById(
+        "dashboard"
+    ).style.display = "block";
+
+
+    localStorage.setItem(
+        "keepFitUser",
+        JSON.stringify({
+            name:userName,
+            age:age,
+            weight:weight,
+            gender:selectedGender
+        })
+    );
+
+
+    document
+    .getElementById("dashboard")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+
+
+    setTimeout(function(){
+
+        speak(
+            "Welcome to Keep Fit Web, " +
+            userName +
+            ". I am your personal " +
+            selectedGender +
+            " fitness assistant. " +
+            "I will remind you to exercise and motivate you to stay active."
+        );
+
+    },700);
+
+});
+
+
+/* TEST SELECTED VOICE */
+
+function testVoice(){
+
+    if(!userName){
+
+        alert(
+            "Please create your fitness profile first."
+        );
+
+        return;
+
+    }
+
+    speak(
+        "Hello " +
+        userName +
+        ". This is your " +
+        selectedGender +
+        " fitness assistant. " +
+        "Let's keep fit together!"
+    );
+
+}
+
+
+/* START REMINDERS */
+
+function startReminders(){
+
+    if(!userName){
+
+        alert(
+            "Please create your fitness profile first."
+        );
+
+        return;
+
+    }
+
+
+    speak(
+        "Hello " +
+        userName +
+        ". Your fitness reminders are now active. " +
+        "Remember to stay hydrated and keep moving."
+    );
+
+
+    if(reminderTimer){
+        clearInterval(reminderTimer);
+    }
+
+
+    /*
+       TEST MODE:
+       Reminder every 60 seconds.
+
+       60000 = 1 minute
+       300000 = 5 minutes
+       600000 = 10 minutes
+       1800000 = 30 minutes
+       3600000 = 1 hour
+    */
+
+    reminderTimer =
+        setInterval(function(){
+
+            let random =
+                messages[
+                    Math.floor(
+                        Math.random() *
+                        messages.length
+                    )
+                ];
+
+
+            if(random === "Keep pushing, " ||
+               random === "Your effort today matters. Keep going!"){
+
+                random += userName;
+
+            }
+
+
+            speak(
+                userName +
+                ", it is time to move your body. " +
+                random
+            );
+
+        },60000);
+
+
+    document.getElementById(
+        "voiceStatus"
+    ).textContent =
+        "🔊 Voice reminders are active.";
+
+}
+
+
+/* STOP */
+
+function stopReminders(){
+
+    if(reminderTimer){
+
+        clearInterval(reminderTimer);
+
+        reminderTimer = null;
+
+    }
+
+    speechSynthesis.cancel();
+
+    document.getElementById(
+        "voiceStatus"
+    ).textContent =
+        "🔇 Voice reminders stopped.";
+
+}
+
+
+/* MOTIVATE */
+
+function motivate(){
+
+    if(!userName){
+
+        alert(
+            "Please create your fitness profile first."
+        );
+
+        return;
+
+    }
+
+
+    let message =
+        messages[
+            Math.floor(
+                Math.random() *
+                messages.length
+            )
+        ];
+
+
+    if(
+        message === "Keep pushing, " ||
+        message ===
+        "Your effort today matters. Keep going!"
+    ){
+
+        message += userName;
+
+    }
+
+
+    const fullMessage =
+        userName +
+        ", " +
+        message;
+
+
+    speak(fullMessage);
+
+
+    document.getElementById(
+        "motivationText"
+    ).textContent =
+        fullMessage;
+
+}
+
+
+/* CALORIE PROGRESS */
+
+function burnCalories(amount){
+
+    if(!userName){
+
+        alert(
+            "Please create your profile first."
+        );
+
+        return;
+
+    }
+
+
+    calories += amount;
+
+
+    updateCalories();
+
+
+    speak(
+        "Well done, " +
+        userName +
+        "! You have added approximately " +
+        amount +
+        " calories to your activity progress."
+    );
+
+}
+
+
+function updateCalories(){
+
+    document.getElementById(
+        "totalCalories"
+    ).textContent =
+        calories + " kcal";
+
+
+    document.getElementById(
+        "calorieNumber"
+    ).textContent =
+        calories;
+
+
+    const goal = 300;
+
+
+    let percent =
+        Math.round(
+            (calories / goal) * 100
+        );
+
+
+    if(percent > 100)
+        percent = 100;
+
+
+    document.getElementById(
+        "calorieBar"
+    ).style.width =
+        percent + "%";
+
+
+    document.getElementById(
+        "caloriePercent"
+    ).textContent =
+        percent + "%";
+
+
+    localStorage.setItem(
+        "keepFitCalories",
+        calories
+    );
+
+}
+
+
+/* SCHEDULE PROGRESS */
+
+function scheduleProgress(){
+
+    const boxes =
+        document.querySelectorAll(
+            'table input[type="checkbox"]'
+        );
+
+
+    let completed = 0;
+
+
+    boxes.forEach(function(box){
+
+        if(box.checked){
+
+            completed++;
+
+            box.parentElement.style
+            .textDecoration =
+            "line-through";
+
+            box.parentElement.style
+            .opacity = ".55";
+
+        }else{
+
+            box.parentElement.style
+            .textDecoration =
+            "none";
+
+            box.parentElement.style
+            .opacity = "1";
+
+        }
+
+    });
+
+
+    localStorage.setItem(
+        "keepFitSchedule",
+        completed
+    );
+
+}
+
+
+/* DARK MODE */
+
+function toggleDarkMode(){
+
+    document.body
+    .classList.toggle("dark");
+
+
+    localStorage.setItem(
+        "keepFitDark",
+        document.body.classList.contains("dark")
+    );
+
+}
+
+
+/* LOAD USER */
+
+window.addEventListener(
+"load",
+function(){
+
+    const saved =
+        localStorage.getItem(
+            "keepFitUser"
+        );
+
+
+    if(saved){
+
+        const user =
+            JSON.parse(saved);
+
+
+        userName =
+            user.name;
+
+
+        selectedGender =
+            user.gender ||
+            "female";
+
+
+        document.getElementById(
+            "name"
+        ).value =
+            user.name;
+
+
+        document.getElementById(
+            "age"
+        ).value =
+            user.age;
+
+
+        document.getElementById(
+            "weight"
+        ).value =
+            user.weight;
+
+
+        document.getElementById(
+            "voiceGender"
+        ).value =
+            selectedGender;
+
+
+        document.getElementById(
+            "displayName"
+        ).textContent =
+            user.name;
+
+
+        document.getElementById(
+            "displayAge"
+        ).textContent =
+            user.age;
+
+
+        document.getElementById(
+            "displayWeight"
+        ).textContent =
+            user.weight + " kg";
+
+
+        document.getElementById(
+            "welcome"
+        ).textContent =
+            "Welcome back, " +
+            user.name + "!";
+
+
+        document.getElementById(
+            "dashboard"
+        ).style.display =
+            "block";
+
+    }
+
+
+    const savedCalories =
+        localStorage.getItem(
+            "keepFitCalories"
+        );
+
+
+    if(savedCalories){
+
+        calories =
+            Number(savedCalories);
+
+        updateCalories();
+
+    }
+
+
+    if(
+        localStorage.getItem(
+            "keepFitDark"
+        ) === "true"
+    ){
+
+        document.body
+        .classList.add("dark");
+
+    }
+
+});
+
+
+/*
+   Some browsers load their voices asynchronously.
+   Calling getVoices() makes the available voices appear.
+*/
+
+if("speechSynthesis" in window){
+
+    speechSynthesis.onvoiceschanged =
+        function(){
+            speechSynthesis.getVoices();
+        };
+
+}
+
+</script>
+
+</body>
+</html>
